@@ -74,8 +74,12 @@ public interface GroceryStoreRepo extends JpaRepository<OnlineGroceryStore, Long
 
 
     //SQL
-    @Query(value = "select * from GROCERY_STORE where serialNumber=: serialNumber", nativeQuery = true)
-    OnlineGroceryStore getOnlineGroceryStoreBySerialNumberSQL(Long serialNumber);
+    //@Query(value = "select * from GROCERY_STORE where SERIAL_NUMBER=: serialNumber", nativeQuery = true) //NAMED PARAMETER CAN NOT HAVE SPACE
+    @Query(value = "select * from GROCERY_STORE where SERIAL_NUMBER=:serialNumber", nativeQuery = true)
+    OnlineGroceryStore getOnlineGroceryStoreBySerialNumberSQL(@Param("serialNumber") Long serialNumber);
+
+//    @Query(value = "select * from GROCERY_STORE where SERIAL_NUMBER=?1", nativeQuery = true)   //POSITIONAL ARG.
+//    OnlineGroceryStore getOnlineGroceryStoreBySerialNumberSQL(Long serialNumber);
 
     @Query(value = "select * from GROCERY_STORE", nativeQuery = true)
     List<OnlineGroceryStore> getOnlineGroceryStoreBySQL(); // custom

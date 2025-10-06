@@ -33,20 +33,19 @@ public class OnlineGroceryStoreController {
     @PostMapping("/insertAnItem")
     public ResponseEntity<Void> insertAnItem(@RequestBody OnlineGroceryStore onlineGroceryStore) {
         System.out.println("Attempting to insert a record in GroceryStoreTable: " + onlineGroceryStore);
-        return onlineGroceryStoreService.insertAnItemInGroceryStore(onlineGroceryStore);    //  return new ResponseEntity<>(employeeEntity, HttpStatus.CREATED);
+        return onlineGroceryStoreService.insertAnItemInGroceryStore(onlineGroceryStore);    //  return new ResponseEntity<>(onlineGroceryStore, HttpStatus.CREATED);
     }
 
-//    // QAK: why manual entry added in table is not getting fetched; need commit on DB first
 //    @GetMapping("/fetchEmployeeRecords")
 //    public ResponseEntity<List<EmployeeEntity>> fetchAllEmployeeRecords() {
 //        //return new ResponseEntity(employeeService.fetchAllEmployeeRecords(), HttpStatus.OK);
 //        return employeeService.fetchAllEmployeeRecords(); //return like this
 //    }
 //
-//    @GetMapping("fetchAnEmployeeRecord/{empId}")
-//    public ResponseEntity<EmployeeEntity> fetchAnEmployeeRecord(@PathVariable("empId") Long empId) {
-//        return employeeService.fetchAnEmployeeRecord(empId);
-//    }
+    @GetMapping("getRecordFromGroceryStore/{serialNumber}")
+    public ResponseEntity<OnlineGroceryStore> getRecordFromGroceryStore(@PathVariable("serialNumber") Long serialNumber) {
+        return onlineGroceryStoreService.getRecordFromGroceryStore(serialNumber);
+    }
 //
 //
 //    @DeleteMapping("/deleteAnEmployeeById/{empId}")
