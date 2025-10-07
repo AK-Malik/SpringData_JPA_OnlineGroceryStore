@@ -23,7 +23,8 @@ import java.util.List;
  * By extending JpaRepository, EmployeeJpaSqlRepo automatically inherits methods like save(), findById(), findAll(), deleteById(), etc., without you needing to write their implementations.
  */
 public interface GroceryStoreRepo extends JpaRepository<OnlineGroceryStore, Long> {
-// JPQL custom query
+
+    // --------JPQL custom query--------
     /**
      * @Query(...)
      * This annotation is used in Spring Data JPA to define a custom JPQL (Java Persistence Query Language) query for a repository method.
@@ -73,7 +74,8 @@ public interface GroceryStoreRepo extends JpaRepository<OnlineGroceryStore, Long
     void deleteBySerialNumber(@Param("serialNumber") Long serialNumber);      //int deleteBySerialNumber(@Param("serialNumber") Long serialNumber);
 
 
-    //SQL
+    //------------SQL------------------
+
     //@Query(value = "select * from GROCERY_STORE where SERIAL_NUMBER=: serialNumber", nativeQuery = true) //NAMED PARAMETER CAN NOT HAVE SPACE
     @Query(value = "select * from GROCERY_STORE where SERIAL_NUMBER=:serialNumber", nativeQuery = true)
     OnlineGroceryStore getOnlineGroceryStoreBySerialNumberSQL(@Param("serialNumber") Long serialNumber);
@@ -84,7 +86,20 @@ public interface GroceryStoreRepo extends JpaRepository<OnlineGroceryStore, Long
     @Query(value = "select * from GROCERY_STORE", nativeQuery = true)
     List<OnlineGroceryStore> getOnlineGroceryStoreBySQL(); // custom
 
+    @Modifying
+    @Query(value = "DELETE FROM GROCERY_STORE WHERE SERIAL_NUMBER=:serialNumber", nativeQuery = true)
+    void deleteRecordFromOnlineGroceryStoreBySQL(@Param("serialNumber") Long serialNumber);  //return type for update or delete with @modifying will always be int or void
+//-------------
+    @Modifying
+    @Query(value = "UPDATE GROCERY_STORE SET ITEM_NAME = :itemName WHERE SERIAL_NUMBER = :serialNumber", nativeQuery = true)
+    void updateItem(@Param("itemName") String itemName, @Param("serialNumber") Long serialNumber);
+
+    @Modifying
+    @Query(value = "INSERT INTO GROCERY_STORE (CUSTOMER_NAME, ITEM_NAME) VALUES (:customerName, :itemName)", nativeQuery = true)
+    void insertItem(@Param("customerName") Long customerName, @Param("itemName") String itemName);
+//-------------
 
 }
+
 
 
