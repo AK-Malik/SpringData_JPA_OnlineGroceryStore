@@ -1,8 +1,8 @@
 package com.AK.Jpeproject.SpringData_JPA_OnlineGroceryStore.Service;
 
 import com.AK.Jpeproject.SpringData_JPA_OnlineGroceryStore.Oracle1.Entity.OnlineGroceryStore;
-import com.AK.Jpeproject.SpringData_JPA_OnlineGroceryStore.Oracle1.Repo.GroceryStoreBaseRepo;
 import com.AK.Jpeproject.SpringData_JPA_OnlineGroceryStore.Oracle1.Repo.GroceryStoreRepo;
+import com.AK.Jpeproject.SpringData_JPA_OnlineGroceryStore.Oracle1.Repo.GroceryStoreResultSet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,8 +16,8 @@ public class OnlineGroceryStoreService {
 
     @Autowired
     private GroceryStoreRepo groceryStoreRepo;
-//    @Autowired
-//    private GroceryStoreBaseRepo groceryStoreBaseRepo;  //Not needed.
+  //  @Autowired
+  //  private GroceryStoreResultSet groceryStoreResultSet;  //Not needed.
 
     /**
      * Insert a record in Grocery_Store Table
@@ -98,7 +98,7 @@ public class OnlineGroceryStoreService {
             if (incomingOnlineGroceryStore != null) {
                 OnlineGroceryStore existingOnlineGroceryStore = groceryStoreRepo.getOnlineGroceryStoreBySerialNumberSQL(serialNumber);
                 if (existingOnlineGroceryStore != null) {
-                    existingOnlineGroceryStore.setSerialNumber(incomingOnlineGroceryStore.getSerialNumber());
+                  //  existingOnlineGroceryStore.setSerialNumber(incomingOnlineGroceryStore.getSerialNumber());  remove this line as serial number is primary key and auto incremented
                     existingOnlineGroceryStore.setItemName(incomingOnlineGroceryStore.getItemName());
                     existingOnlineGroceryStore.setQuantity(incomingOnlineGroceryStore.getQuantity());
                     existingOnlineGroceryStore.setBillAmount(incomingOnlineGroceryStore.getBillAmount());
@@ -113,8 +113,22 @@ public class OnlineGroceryStoreService {
                     return new ResponseEntity<>(HttpStatus.OK);
                 } else {
                     //groceryStoreRepo.save(incomingOnlineGroceryStore);
-                    groceryStoreRepo.insertItem(incomingOnlineGroceryStore.getSerialNumber(), incomingOnlineGroceryStore.getItemName());
+                  //  groceryStoreRepo.insertItem(incomingOnlineGroceryStore.getSerialNumber(), incomingOnlineGroceryStore.getItemName());
+                   //****QAK? why i can not give pojo directly for the insert
+                    //****QAK? why i am using this: if(serialNumber != null) when default postman calls checks if serialNumber is passed as space or char . 400
+                   /* groceryStoreRepo.insertItem(incomingOnlineGroceryStore);
                     System.out.println("Inserted the record in GroceryStoreTable for serialNumber: " + serialNumber);
+                    */
+                    groceryStoreRepo.insertItem(
+                            incomingOnlineGroceryStore.getBillAmount(),
+                            incomingOnlineGroceryStore.getCustomerName(),
+                            incomingOnlineGroceryStore.getItemName(),
+                            incomingOnlineGroceryStore.getQuantity(),
+                            incomingOnlineGroceryStore.getItemInsertDate(),
+                            incomingOnlineGroceryStore.getPhoneNumber(),
+                            incomingOnlineGroceryStore.getEmail(),
+                            incomingOnlineGroceryStore.getRemarks()
+                    );
                     return new ResponseEntity<>(HttpStatus.CREATED);
                 }
 
@@ -126,6 +140,25 @@ public class OnlineGroceryStoreService {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
     }
+
+    //reporting query
+    @Transactional
+    public ResponseEntity<Long> getCountOfRecordsInGSTable()
+    {
+        System.out.println("Attempting to get the count of records in GroceryStoreTable..");
+       Long recordCount = groceryStoreRepo.getCountOfRecordsInGroceryStore();
+        System.out.println("Count of records in GroceryStoreTable: " + recordCount);
+        return new ResponseEntity<Long>(recordCount, HttpStatus.OK);
+    }
+
+    @Transactional
+    public ResponseEntity<Double> getTotalBillAmtInGSTable()
+    {
+        Double totalBillAmount = groceryStoreRepo.getTotalBillAmountInGroceryStore();
+        System.out.println("Total bill amount in GroceryStoreTable: " + totalBillAmount);
+        return new ResponseEntity<>(totalBillAmount, HttpStatus.OK);
+    }
+
 
 }
 

@@ -3,9 +3,12 @@ package com.AK.Jpeproject.SpringData_JPA_OnlineGroceryStore.Oracle1.Repo;
 import com.AK.Jpeproject.SpringData_JPA_OnlineGroceryStore.Oracle1.Entity.OnlineGroceryStore;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.NativeQuery;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.TransactionUsageException;
 
+import java.time.LocalDate;
 import java.util.List;
 
 /**
@@ -94,10 +97,35 @@ public interface GroceryStoreRepo extends JpaRepository<OnlineGroceryStore, Long
     @Query(value = "UPDATE GROCERY_STORE SET ITEM_NAME = :itemName WHERE SERIAL_NUMBER = :serialNumber", nativeQuery = true)
     void updateItem(@Param("itemName") String itemName, @Param("serialNumber") Long serialNumber);
 
+//    @Modifying
+//    @Query(value = "INSERT INTO GROCERY_STORE (BILL_AMOUNT, CUSTOMER_NAME, ITEM_NAME, QUANTITY, ITEM_INSERT_DT, PHONE_NUMBER, E_MAIL, REMARKS) " +
+//            "VALUES (:itemName, :itemInsertDate, :quantity, :billAmount, :customerName, :phoneNumber, :email, :remarks)", nativeQuery = true)
+//    void insertItem(@Param("customerName") Long customerName, @Param("itemName") String itemName);
+
     @Modifying
-    @Query(value = "INSERT INTO GROCERY_STORE (CUSTOMER_NAME, ITEM_NAME) VALUES (:customerName, :itemName)", nativeQuery = true)
-    void insertItem(@Param("customerName") Long customerName, @Param("itemName") String itemName);
+    @Query(value = "INSERT INTO GROCERY_STORE (BILL_AMOUNT, CUSTOMER_NAME, ITEM_NAME, QUANTITY, ITEM_INSERT_DT, PHONE_NUMBER, E_MAIL, REMARKS) " +
+            "VALUES (:billAmount, :customerName, :itemName, :quantity, :itemInsertDate, :phoneNumber, :email, :remarks)", nativeQuery = true)
+    //void insertItem(OnlineGroceryStore incomingOnlineGroceryStore);
+    void insertItem(
+            @Param("billAmount") Double billAmount,
+            @Param("customerName") String customerName,
+            @Param("itemName") String itemName,
+            @Param("quantity") String quantity,
+            @Param("itemInsertDate") LocalDate itemInsertDate,
+            @Param("phoneNumber") String phoneNumber,
+            @Param("email") String email,
+            @Param("remarks") String remarks
+    );
 //-------------
+
+    @Query(value = "SELECT count(*) from GROCERY_STORE", nativeQuery = true)
+    Long getCountOfRecordsInGroceryStore(); // custom
+
+
+//    @Query(value = "SELECT STATE_NAME as stateName, count(*) as countOfStates from JPA_ANIL group by STATE_NAME", nativeQuery = true)
+//    List<AnilResultSet> getCountOfStates(); // custom
+@Query(value = "select SUM(BILL_AMOUNT) from GROCERY_STORE", nativeQuery = true)
+Double getTotalBillAmountInGroceryStore();
 
 }
 

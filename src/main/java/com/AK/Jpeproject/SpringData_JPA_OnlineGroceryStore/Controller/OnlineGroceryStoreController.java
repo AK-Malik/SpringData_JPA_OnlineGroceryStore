@@ -78,7 +78,17 @@ public class OnlineGroceryStoreController {
      */
     @PutMapping("/updateRecordInGroceryStore/{serialNumber}")
     public ResponseEntity<Void> updateRecord(@PathVariable Long serialNumber, @RequestBody OnlineGroceryStore onlineGroceryStore) {
+        System.out.println("entering");
         return onlineGroceryStoreService.insertUpdateRecordInGroceryStore(serialNumber, onlineGroceryStore);
     }
 
+    @GetMapping("/getCountOfRecordsInGroceryStore")
+    public ResponseEntity<Long> getCountOfRecordsInGroceryStore() {
+        return onlineGroceryStoreService.getCountOfRecordsInGSTable();
+    }
+
+    @GetMapping("/getTotalBillAmountInGroceryStore")
+    public ResponseEntity<Double> getTotalBillAmtInGroceryStore() {
+        return onlineGroceryStoreService.getTotalBillAmtInGSTable();
+    }
 }
