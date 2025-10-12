@@ -3,9 +3,12 @@ package com.AK.Jpeproject.SpringData_JPA_OnlineGroceryStore.Controller;
 import com.AK.Jpeproject.SpringData_JPA_OnlineGroceryStore.Oracle1.Entity.OnlineGroceryStore;
 import com.AK.Jpeproject.SpringData_JPA_OnlineGroceryStore.Service.OnlineGroceryStoreService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.Param;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -13,7 +16,6 @@ public class OnlineGroceryStoreController {
 
     @Autowired
     private OnlineGroceryStoreService onlineGroceryStoreService;
-
 
 
     //pass an inputs in JSON format under body in Postman and store/add in Table/Pojo of OnlineGroceryStore
@@ -32,6 +34,7 @@ public class OnlineGroceryStoreController {
 
     /**
      * Insert a record in Grocery Store.
+     *
      * @param onlineGroceryStore
      * @return
      */
@@ -43,6 +46,7 @@ public class OnlineGroceryStoreController {
 
     /**
      * Get a record using a serial Number from Grocery Store
+     *
      * @param serialNumber
      * @return
      */
@@ -53,6 +57,7 @@ public class OnlineGroceryStoreController {
 
     /**
      * getAllRecords from Grocery Store
+     *
      * @return
      */
     @GetMapping("/getAllRecordsFromGroceryStore")
@@ -62,6 +67,7 @@ public class OnlineGroceryStoreController {
 
     /**
      * Delete a record from grocery_Store table using serial number
+     *
      * @param serialNumber
      * @return
      */
@@ -72,6 +78,7 @@ public class OnlineGroceryStoreController {
 
     /**
      * Update an existing Record in Grocery Store table
+     *
      * @param serialNumber
      * @param onlineGroceryStore
      * @return
@@ -90,5 +97,35 @@ public class OnlineGroceryStoreController {
     @GetMapping("/getTotalBillAmountInGroceryStore")
     public ResponseEntity<Double> getTotalBillAmtInGroceryStore() {
         return onlineGroceryStoreService.getTotalBillAmtInGSTable();
+    }
+
+    //not working
+    @GetMapping("/getRecordsWithinDateRange")
+    public ResponseEntity<?> getRecordsWithinDateRange() {
+        return onlineGroceryStoreService.getRecordsWithinADateRange();
+    }
+
+    //Not implemented
+//    @GetMapping("/getTotalAmtOfSaleOnDailybasis")
+//    public ResponseEntity<?> getTotalAmtOfSaleOnDailybasis() {
+//        return onlineGroceryStoreService.getTotalAmtOfSaleOnDailybasis();
+//    }
+//max of quantity
+    @GetMapping("/getMaxQuantityInGroceryStore")   //Highest sold item
+    public ResponseEntity<?> getMaxQuantityInGroceryStore() {
+        return onlineGroceryStoreService.getMaxQuantityInGroceryStore();
+
+    }
+
+    @GetMapping("/getTotalAmtOfSaleByDates")
+    public ResponseEntity<?> getTotalAmtOfSaleByDates() {
+        return onlineGroceryStoreService.getTotalAmtOfSaleByDates();
+
+    }
+
+    @GetMapping("/getItemNameByPhoneDate/{phoneNumber}/{itemInsertDate}")
+    public ResponseEntity<?> getItemNameByPhoneDate(@PathVariable("phoneNumber") String phoneNumber, @PathVariable("itemInsertDate") @DateTimeFormat LocalDate itemInsertDate) {
+        System.out.println("inputs: "+phoneNumber+", "+itemInsertDate);
+        return onlineGroceryStoreService.getItemNameByPhoneDate(phoneNumber,itemInsertDate);
     }
 }

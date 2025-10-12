@@ -1,6 +1,7 @@
 package com.AK.Jpeproject.SpringData_JPA_OnlineGroceryStore.Service;
 
 import com.AK.Jpeproject.SpringData_JPA_OnlineGroceryStore.Oracle1.Entity.OnlineGroceryStore;
+import com.AK.Jpeproject.SpringData_JPA_OnlineGroceryStore.Oracle1.Repo.GroceryItemNameByPhoneDateResultSet;
 import com.AK.Jpeproject.SpringData_JPA_OnlineGroceryStore.Oracle1.Repo.GroceryStoreRepo;
 import com.AK.Jpeproject.SpringData_JPA_OnlineGroceryStore.Oracle1.Repo.GroceryStoreResultSet;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,13 +10,17 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Locale;
 
 @Service
 public class OnlineGroceryStoreService {
 
     @Autowired
     private GroceryStoreRepo groceryStoreRepo;
+
   //  @Autowired
   //  private GroceryStoreResultSet groceryStoreResultSet;  //Not needed.
 
@@ -29,7 +34,6 @@ public class OnlineGroceryStoreService {
     @Transactional("oracle1-jpaTransactionManager")
     public ResponseEntity<Void> insertAnItemInGroceryStore(OnlineGroceryStore onlineGroceryStore) {
         if (onlineGroceryStore != null) {
-            // groceryStoreBaseRepo.save(onlineGroceryStore);
             groceryStoreRepo.save(onlineGroceryStore);
             System.out.println("Saved a record in GroceryStoreTable: " + onlineGroceryStore);
             return new ResponseEntity<>(HttpStatus.CREATED);
@@ -39,8 +43,8 @@ public class OnlineGroceryStoreService {
     }
 
 
-    //@Transactional("oracle1-jpaTransactionManager")
-    @Transactional
+    @Transactional("oracle1-jpaTransactionManager")
+    //@Transactional
     public ResponseEntity<OnlineGroceryStore> getRecordFromGroceryStore(Long serialNumber) {
         System.out.println("Attempting to get the record from GroceryStoreTable: " + serialNumber);
         if (serialNumber != null) {       //validate system will automatically check this.
@@ -58,7 +62,8 @@ public class OnlineGroceryStoreService {
     }
 
 
-    @Transactional
+    //@Transactional
+    @Transactional("oracle1-jpaTransactionManager")
     public ResponseEntity<List<OnlineGroceryStore>> getAllTheRecordsFromGroceryStore() {
         System.out.println("Attempting to get the records from GroceryStoreTable..");
         if (groceryStoreRepo != null) {
@@ -70,7 +75,8 @@ public class OnlineGroceryStoreService {
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @Transactional
+   // @Transactional
+   @Transactional("oracle1-jpaTransactionManager")
     public ResponseEntity<Void> deleteTheRecordFromGroceryStoreTable(Long serialNumber) {
         if (serialNumber != null) {   //to avoid null pointer exception
             System.out.println("Attempting to delete the record from GroceryStoreTable..");
@@ -91,7 +97,8 @@ public class OnlineGroceryStoreService {
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
-    @Transactional
+    //@Transactional
+    @Transactional("oracle1-jpaTransactionManager")
     public ResponseEntity<Void> insertUpdateRecordInGroceryStore(Long serialNumber, OnlineGroceryStore incomingOnlineGroceryStore) {
         System.out.println("Attempting to update the record in GroceryStoreTable for serialNumber: " + serialNumber + ", " + incomingOnlineGroceryStore);
         if (serialNumber != null) {
@@ -110,9 +117,9 @@ public class OnlineGroceryStoreService {
                     // groceryStoreRepo.save(existingOnlineGroceryStore);
                     groceryStoreRepo.updateItem(incomingOnlineGroceryStore.getItemName(), incomingOnlineGroceryStore.getSerialNumber());
                     System.out.println("Updated the record in GroceryStoreTable for serialNumber: " + serialNumber);
-                    return new ResponseEntity<>(HttpStatus.OK);
+                    return new ResponseEntity<>(HttpStatus.ACCEPTED);
                 } else {
-                    //groceryStoreRepo.save(incomingOnlineGroceryStore);
+                    //groceryStoreRepo.save(incomingOnlineGroceryStore);  //always use this. This is hibernate flow
                   //  groceryStoreRepo.insertItem(incomingOnlineGroceryStore.getSerialNumber(), incomingOnlineGroceryStore.getItemName());
                    //****QAK? why i can not give pojo directly for the insert
                     //****QAK? why i am using this: if(serialNumber != null) when default postman calls checks if serialNumber is passed as space or char . 400
@@ -142,7 +149,8 @@ public class OnlineGroceryStoreService {
     }
 
     //reporting query
-    @Transactional
+    //@Transactional
+    @Transactional("oracle1-jpaTransactionManager")
     public ResponseEntity<Long> getCountOfRecordsInGSTable()
     {
         System.out.println("Attempting to get the count of records in GroceryStoreTable..");
@@ -151,12 +159,58 @@ public class OnlineGroceryStoreService {
         return new ResponseEntity<Long>(recordCount, HttpStatus.OK);
     }
 
-    @Transactional
+    @Transactional("oracle1-jpaTransactionManager")
+    //@Transactional
     public ResponseEntity<Double> getTotalBillAmtInGSTable()
     {
         Double totalBillAmount = groceryStoreRepo.getTotalBillAmountInGroceryStore();
         System.out.println("Total bill amount in GroceryStoreTable: " + totalBillAmount);
         return new ResponseEntity<>(totalBillAmount, HttpStatus.OK);
+    }
+//Not working
+@Transactional("oracle1-jpaTransactionManager")
+    // @Transactional
+    //public ResponseEntity<List<OnlineGroceryStore>>  getRecordsWithinADateRange() {
+     public ResponseEntity<?>  getRecordsWithinADateRange() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MMM-yy", Locale.ENGLISH);
+        // DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MMM-yy");
+        //LocalDate startDate = LocalDate.parse("05-OCT-25", formatter);
+//        LocalDate startDate = LocalDate.parse("2025-10-05", formatter);
+//        LocalDate endDate = LocalDate.parse("2025-10-06", formatter);
+//        OnlineGroceryStore onlineGroceryStore = null;
+//        onlineGroceryStore.setInsertDate(startDate); //how to handle nullpointer error
+//        onlineGroceryStore.setInsertDate(endDate);
+//        List<GroceryStoreResultSet> groceryStoreResultSet = groceryStoreRepo.getRecordsWithinDateRange(startDate,endDate);
+//        for (GroceryStoreResultSet item : groceryStoreResultSet) {
+//            System.out.println("getRecordsWithinADateRange: " + item);
+//            }
+//            return new ResponseEntity<List<GroceryStoreResultSet>>(groceryStoreResultSet, HttpStatus.OK);
+           return new ResponseEntity<>(HttpStatus.OK);
+        }
+
+//@Transactional
+@Transactional("oracle1-jpaTransactionManager")
+    public ResponseEntity<?> getMaxQuantityInGroceryStore() {
+        Integer maxQuantity = groceryStoreRepo.getMaxQuantityInGroceryStore();
+        System.out.println("Max quantity in GroceryStoreTable: " + maxQuantity);
+        return new ResponseEntity<>(maxQuantity, HttpStatus.OK);
+    }
+
+    //@Transactional
+    @Transactional("oracle1-jpaTransactionManager")
+    public ResponseEntity<List<GroceryStoreResultSet>> getTotalAmtOfSaleByDates() {
+        List<GroceryStoreResultSet> groceryStoreResultSet = groceryStoreRepo.getTotalAmtOfSaleByDate();
+        return new ResponseEntity<>(groceryStoreResultSet,HttpStatus.OK);
+
+    }
+
+    @Transactional
+//    public ResponseEntity<GroceryStoreResultSet> getItemNameByPhoneDate(String phoneNumber, LocalDate itemInsertDate) {
+//        GroceryStoreResultSet groceryStoreResultSet = groceryStoreRepo.getItemNameByPhoneAndDate(phoneNumber,itemInsertDate);
+//        return new ResponseEntity<>(groceryStoreResultSet,HttpStatus.OK);
+    public ResponseEntity<List<GroceryItemNameByPhoneDateResultSet>> getItemNameByPhoneDate(String phoneNumber, LocalDate itemInsertDate) {
+        List<GroceryItemNameByPhoneDateResultSet> groceryItemNameByPhoneDateResultSet = groceryStoreRepo.getItemNameByPhoneAndDate(phoneNumber,itemInsertDate);
+        return new ResponseEntity<>(groceryItemNameByPhoneDateResultSet,HttpStatus.OK);
     }
 
 

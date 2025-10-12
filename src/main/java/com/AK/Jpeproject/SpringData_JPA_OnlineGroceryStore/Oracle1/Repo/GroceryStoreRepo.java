@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.NativeQuery;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import org.springframework.transaction.TransactionUsageException;
+import com.AK.Jpeproject.SpringData_JPA_OnlineGroceryStore.Oracle1.Repo.GroceryStoreResultSet; //needed only if resultset is part of package
 
 import java.time.LocalDate;
 import java.util.List;
@@ -61,20 +61,20 @@ public interface GroceryStoreRepo extends JpaRepository<OnlineGroceryStore, Long
     /**
      * Using JPQL, Add a record, if it doesn't exist or update if exist
         */
-    @Modifying
-    @Query(value ="UPDATE OnlineGroceryStore ae SET ae.itemName=:itemName, ae.itemInsertDate =:itemInsertDate,ae.quantity=: quantity, ae.billAmount= :billAmount,ae.customerName=:customerName," +
-                  "ae.email=:email, ae.phoneNumber =:phoneNumber, ae.remarks =:remarks WHERE ae.serialNumber =:serialNumber")
-    OnlineGroceryStore insertOrUpdateRecord(@Param("serialNumber") Long serialNumber, @Param("itemName") String itemName,@Param("quantity") Double quantity,@Param("billAmount") String billAmount,@Param("customerName") String customerName,
-                                            @Param("email") String email, @Param("phoneNumber") String phoneNumber, @Param("remarks") String remarks);
-
-    /**
-     * Delete a record using JPQL
-     * @param serialNumber
-     * @return
-     */
-    @Modifying
-    @Query("DELETE FROM OnlineGroceryStore ae WHERE ae.serialNumber=:serialNumber")
-    void deleteBySerialNumber(@Param("serialNumber") Long serialNumber);      //int deleteBySerialNumber(@Param("serialNumber") Long serialNumber);
+//    @Modifying
+//    @Query(value ="UPDATE OnlineGroceryStore ae SET ae.itemName=:itemName, ae.itemInsertDate =:itemInsertDate,ae.quantity=: quantity, ae.billAmount= :billAmount,ae.customerName=:customerName," +
+//                  "ae.email=:email, ae.phoneNumber =:phoneNumber, ae.remarks =:remarks WHERE ae.serialNumber =:serialNumber")
+//    OnlineGroceryStore insertOrUpdateRecord(@Param("serialNumber") Long serialNumber, @Param("itemName") String itemName,@Param("quantity") Double quantity,@Param("billAmount") String billAmount,@Param("customerName") String customerName,
+//                                            @Param("email") String email, @Param("phoneNumber") String phoneNumber, @Param("remarks") String remarks);
+//
+//    /**
+//     * Delete a record using JPQL
+//     * @param serialNumber
+//     * @return
+//     */
+//    @Modifying
+//    @Query("DELETE FROM OnlineGroceryStore ae WHERE ae.serialNumber=:serialNumber")
+//    void deleteBySerialNumber(@Param("serialNumber") Long serialNumber);      //int deleteBySerialNumber(@Param("serialNumber") Long serialNumber);
 
 
     //------------SQL------------------
@@ -110,7 +110,7 @@ public interface GroceryStoreRepo extends JpaRepository<OnlineGroceryStore, Long
             @Param("billAmount") Double billAmount,
             @Param("customerName") String customerName,
             @Param("itemName") String itemName,
-            @Param("quantity") String quantity,
+            @Param("quantity") Integer quantity,
             @Param("itemInsertDate") LocalDate itemInsertDate,
             @Param("phoneNumber") String phoneNumber,
             @Param("email") String email,
@@ -122,12 +122,30 @@ public interface GroceryStoreRepo extends JpaRepository<OnlineGroceryStore, Long
     Long getCountOfRecordsInGroceryStore(); // custom
 
 
-//    @Query(value = "SELECT STATE_NAME as stateName, count(*) as countOfStates from JPA_ANIL group by STATE_NAME", nativeQuery = true)
-//    List<AnilResultSet> getCountOfStates(); // custom
-@Query(value = "select SUM(BILL_AMOUNT) from GROCERY_STORE", nativeQuery = true)
-Double getTotalBillAmountInGroceryStore();
+    @Query(value = "select SUM(BILL_AMOUNT) from GROCERY_STORE", nativeQuery = true)
+    Double getTotalBillAmountInGroceryStore();
+
+    @Query(value = "SELECT * FROM GROCERY_STORE WHERE ITEM_INSERT_DT BETWEEN :startDate AND :endDate", nativeQuery = true)
+   // List<GroceryStoreResultSet> getRecordsWithinDateRange(@Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate); // custom
+    List<GroceryStoreResultSet>getRecordsWithinDateRange(@Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate); // custom
+//"SELECT * FROM GROCERY_STORE WHERE ITEM_INSERT_DT BETWEEN '05-OCT-25' AND '06-OCT-25'"
+
+
+    @Query(value="SELECT MAX(QUANTITY) FROM GROCERY_STORE", nativeQuery = true)
+    Integer getMaxQuantityInGroceryStore();
+
+
+    @Query(value=" SELECT ITEM_INSERT_DT as orderDate, COUNT(QUANTITY) as totalSaleAmount FROM GROCERY_STORE GROUP BY ITEM_INSERT_DT", nativeQuery =true)
+    List<GroceryStoreResultSet> getTotalAmtOfSaleByDate();
+
+    @Query(value ="SELECT ITEM_NAME as itemName FROM GROCERY_STORE WHERE PHONE_NUMBER=:phoneNumber AND ITEM_INSERT_DT=:itemInsertDate",nativeQuery = true)
+    //GroceryStoreResultSet getItemNameByPhoneAndDate(
+    List<GroceryItemNameByPhoneDateResultSet> getItemNameByPhoneAndDate(
+            @Param("phoneNumber") String phoneNumber,
+            @Param("itemInsertDate") LocalDate itemInsertDate
+    );
+
 
 }
-
 
 

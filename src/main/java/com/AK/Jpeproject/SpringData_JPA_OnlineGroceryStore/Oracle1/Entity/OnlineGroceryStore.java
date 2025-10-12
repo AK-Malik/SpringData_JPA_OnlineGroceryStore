@@ -12,10 +12,9 @@ import java.time.LocalDate;
 public class OnlineGroceryStore {
 
     /**
-     *  @Id marks the field as the primary key.
-     *  @GeneratedValue(strategy = GenerationType.IDENTITY) tells JPA to let the database automatically generate a unique value for this field (usually using an auto-increment column in databases like MySQL, PostgreSQL, SQL Server, etc.).
+     * id marks the field as the primary key.
+     * GeneratedValue(strategy = GenerationType. IDENTITY) tells JPA to let the database automatically generate a unique value for this field (usually using an auto-increment column in databases like MySQL, PostgreSQL, SQL Server, etc.).
      */
-
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)   //for auto generated value. this column don't need to add in JSON or manual insert
         @Column(name="SERIAL_NUMBER")
@@ -28,7 +27,7 @@ public class OnlineGroceryStore {
         private LocalDate itemInsertDate;
 
         @Column(name="QUANTITY", length = 10)
-        private String quantity;
+        private Integer quantity;
 
         @Column(name ="BILL_AMOUNT", length = 10)
         private Double billAmount;
@@ -66,10 +65,10 @@ public class OnlineGroceryStore {
         this.itemInsertDate = itemInsertDate;
     }
 
-    public String getQuantity() {
+    public Integer getQuantity() {
         return quantity;
     }
-    public void setQuantity(String quantity) {
+    public void setQuantity(Integer quantity) {
         this.quantity = quantity;
     }
 
