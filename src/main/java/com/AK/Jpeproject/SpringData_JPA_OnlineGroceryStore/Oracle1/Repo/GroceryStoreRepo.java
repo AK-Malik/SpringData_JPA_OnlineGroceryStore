@@ -140,7 +140,7 @@ public interface GroceryStoreRepo extends JpaRepository<OnlineGroceryStore, Long
 
     @Query(value ="SELECT ITEM_NAME as itemName FROM GROCERY_STORE WHERE PHONE_NUMBER=:phoneNumber AND ITEM_INSERT_DT=:itemInsertDate",nativeQuery = true)
     //GroceryStoreResultSet getItemNameByPhoneAndDate(
-    List<GroceryItemNameByPhoneDateResultSet> getItemNameByPhoneAndDate(
+    List<GroceryItemNameByPhoneDateResultSet> getItemNameByPhoneAndDate(   //for custom name always use a new resultset for a new entity.
             @Param("phoneNumber") String phoneNumber,
             @Param("itemInsertDate") LocalDate itemInsertDate
     );
